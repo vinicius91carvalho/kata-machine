@@ -18,13 +18,14 @@ export default class Stack<T> {
             this.head = node
             return
         }
-
-        const head = this.head
+ 
+        node.prev = this.head
         this.head = node
-        this.head.prev = head
     }
 
     pop(): T | undefined {
+        this.length = Math.max(0, this.length - 1)
+
         if (!this.head) {
             return undefined
         }
@@ -33,8 +34,6 @@ export default class Stack<T> {
         this.head = this.head.prev
 
         head.prev = undefined
-
-        this.length--
 
         return head.item
     }
