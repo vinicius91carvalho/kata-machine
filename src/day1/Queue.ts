@@ -2,49 +2,52 @@
 // dequeue O (1)
 
 export class Node<T> {
-    constructor(public readonly value: T, public next?: Node<T>, public prev?: Node<T>) {}
+    constructor(public readonly value: T, public next?: Node<T>) {}
 }
 
 export default class Queue<T> {
     public length: number;
-    private head: Node<T> | undefined
-    private tail: Node<T> | undefined
+    private head?: Node<T>
+    private tail?: Node<T>
 
     constructor() {
+        this.head = this.tail = undefined
         this.length = 0
     }
 
     enqueue(item: T): void {
+        const node = new Node(item)
         this.length++
-        if (!this.head) {
-            this.head = new Node(item)
-            this.tail = this.head
+        
+        if (!this.tail) {
+            this.head = this.tail = node
             return
         }
-        const oldHead = this.head
-        this.head = new Node(item, oldHead)
-        oldHead.prev = this.head
+
+        this.tail.next = node
+        this.tail = node
     }
 
     deque(): T | undefined {
-        if (this.tail) {
-            this.length--
-            if (this.tail.prev) {
-                const oldTail = this.tail
-                this.tail = this.tail.prev!
-                this.tail.next = undefined
-                return oldTail.value
-            } else {
-                const node = this.tail
-                this.tail = undefined
-                this.head = undefined
-                return node.value
-            }
+        if (!this.head) {
+            return
         }
-        return undefined
+
+        const head = this.head
+        this.head = this.head.next
+
+        head.next = undefined
+
+        this.length--
+
+        if (this.length === 0) {
+            this.tail = undefined
+        }
+
+        return head.value
     }
 
     peek(): T | undefined {
-        return this.tail?.value
+        return this.head?.value
     }
 }
